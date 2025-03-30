@@ -2,8 +2,10 @@ services:
   - type: web
     name: ai-recommendation
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install --no-cache-dir -r requirements.txt
     startCommand: gunicorn main:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.8.10 
+        value: 3.9.0
+      - key: PIP_NO_CACHE_DIR
+        value: "1" 
