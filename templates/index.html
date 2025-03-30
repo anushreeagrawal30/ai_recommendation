@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Recommendation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  </head>
+
+  <style>
+    :root {
+        --primary-color: #4A90E2;
+        --secondary-color: #2C3E50;
+        --accent-color: #E74C3C;
+        --text-light: #ffffff;
+        --text-dark: #2C3E50;
+        --background-light: #f8f9fa;
+        --shadow-color: rgba(74, 144, 226, 0.2);
+        --gradient-start: #4A90E2;
+        --gradient-end: #2C3E50;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .main-title {
+        color: var(--secondary-color);
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 3.5rem;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        position: relative;
+        padding-bottom: 1rem;
+        background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .main-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+        border-radius: 2px;
+    }
+
+    .container {
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: var(--text-dark);
+        border-radius: 30px;
+        padding: 3rem;
+        box-shadow: 0 20px 60px var(--shadow-color);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        backdrop-filter: blur(10px);
+    }
+
+    .container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 70px var(--shadow-color);
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        display: block;
+    }
+
+    .form-control {
+        border: 2px solid var(--primary-color);
+        border-radius: 15px;
+        padding: 1rem 1.5rem;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 20px var(--shadow-color);
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+        border: none;
+        border-radius: 30px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-size: 1.1rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px var(--shadow-color);
+    }
+
+    .btn-danger {
+        background: linear-gradient(45deg, #E74C3C, #C0392B);
+        border: none;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-size: 1.1rem;
+        width: 100%;
+        padding: 1.2rem;
+        margin-top: 1rem;
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+    }
+
+    .toggle-button {
+        background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end)) !important;
+        border: none;
+        color: var(--text-light) !important;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        padding: 1rem 2rem;
+        margin: 0.5rem;
+        min-width: 200px;
+        font-size: 1.1rem;
+    }
+
+    .toggle-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px var(--shadow-color);
+    }
+
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 20px 60px var(--shadow-color);
+    }
+
+    .modal-header {
+        background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end)) !important;
+        color: var(--text-light) !important;
+        border-radius: 20px 20px 0 0;
+        padding: 1.5rem;
+    }
+
+    .modal-body {
+        background-color: var(--background-light);
+        color: var(--text-dark);
+        padding: 2rem;
+        font-size: 1.2rem;
+        line-height: 1.8;
+    }
+
+    #transcription {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 10px;
+        background-color: rgba(74, 144, 226, 0.1);
+        border: 1px solid var(--primary-color);
+        transition: all 0.3s ease;
+        min-height: 50px;
+    }
+
+    #transcription:hover {
+        background-color: rgba(74, 144, 226, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .result-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .modal ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .modal ul li {
+        padding: 1rem 1.5rem;
+        margin: 0.8rem 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+
+    .modal ul li:hover {
+        transform: translateX(10px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding: 1rem;
+        }
+
+        .container {
+            padding: 1.5rem;
+            border-radius: 20px;
+        }
+        
+        .toggle-button {
+            width: 100% !important;
+            margin: 0.5rem 0 !important;
+        }
+
+        .main-title {
+            font-size: 2rem;
+        }
+
+        .form-control {
+            font-size: 1rem;
+        }
+
+        .btn-danger, .btn-primary, .toggle-button {
+            font-size: 1rem;
+            padding: 0.8rem 1.5rem;
+        }
+    }
+  </style>
+</head>
+<body>
+    <h1 class="main-title">AI Recommendation</h1>
+
+    <div class="container">
+        <form action="/predict" method="post">
+            <div class="form-group">
+                <label for="symptoms">Select Symptoms:</label>
+                <input type="text" class="form-control" id="symptoms" name="symptoms" placeholder="Type symptoms such as itching, sleeping, aching etc">
+            </div>
+            <br>
+
+            {% if message %}
+            <p>{{ message }}</p>
+            {% endif %}
+            <br>
+
+            <button type="submit" class="btn btn-danger btn-lg" style="width: 100%; padding: 14px; margin-bottom: 5px;">Predict</button>
+        </form>
+
+        {% if predicted_disease %}
+        <div class="mt-5">
+            <h2 class="text-center mb-4" style="color: var(--secondary-color); font-weight: 600;">Our AI System Results</h2>
+            <div class="result-container">
+                <button class="toggle-button" data-bs-toggle="modal" data-bs-target="#diseaseModal">Disease</button>
+                <button class="toggle-button" data-bs-toggle="modal" data-bs-target="#descriptionModal">Description</button>
+                <button class="toggle-button" data-bs-toggle="modal" data-bs-target="#precautionModal">Precaution</button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Disease Modal -->
+    <div class="modal fade" id="diseaseModal" tabindex="-1" aria-labelledby="diseaseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="diseaseModalLabel">Predicted Disease</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ predicted_disease }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description Modal -->
+    <div class="modal fade" id="descriptionModal" tabindex="-1" aria-labelledby="descriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="descriptionModalLabel">Description</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ dis_des }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Precaution Modal -->
+    <div class="modal fade" id="precautionModal" tabindex="-1" aria-labelledby="precautionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="precautionModalLabel">Precaution</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        {% for i in my_precautions %}
+                            <li>{{ i }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const startSpeechRecognitionButton = document.getElementById('startSpeechRecognition');
+        const transcriptionDiv = document.getElementById('transcription');
+
+        startSpeechRecognitionButton.addEventListener('click', startSpeechRecognition);
+
+        function startSpeechRecognition() {
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.onresult = function (event) {
+                const result = event.results[0][0].transcript;
+                transcriptionDiv.textContent = result;
+            };
+            recognition.onend = function () {
+                console.log('Speech recognition ended.');
+            };
+            recognition.start();
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+</html>
